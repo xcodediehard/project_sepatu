@@ -9,52 +9,44 @@
         @include('components.notify')
     </div>
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary mt-3">DataTables {{ $data["title"] }}</h6>
+        <h6 class="m-0 font-weight-bold text-primary">DataTables {{ $data["title"] }}</h6>
         <div class="mt-2">
-            @include('components.modal',[
+            {{-- @include('components.modal',[
             "modal"=>[
             "color"=>"primary",
             "id"=>"add_merek",
             "action"=>"Add",
-            "url"=>"#",
-            "content"=>"admin.contents.staff.components.add",
+            "url"=>route('merek.insert'),
+            "content"=>"admin.contents.merek.components.add",
             "show_title"=>True
-            ]])
+            ]]) --}}
         </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
-                    <th>No</th>
+
+                    <th>no</th>
                     <th>Nama</th>
                     <th>Email</th>
-                    <th>Aksi</th>
+                    <th>Alamat</th>
+
                 </thead>
                 <tfoot>
-                    <th>No</th>
+
+                    <th>no</th>
                     <th>Nama</th>
                     <th>Email</th>
-                    <th>Aksi</th>
+                    <th>Alamat</th>
                 </tfoot>
                 <tbody>
-                    @foreach ($data['list'] as $item)
+                    @foreach ($data["list"] as $item)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->name }}</td>
+                        <td>{{$loop->iteration}}</td>
+                        <td>{{ $item->nama }}</td>
                         <td>{{ $item->email }}</td>
-                        <td>
-                            <div class="mt-2">
-                                @include('components.modal',[
-                                "modal"=>[
-                                "color"=>"danger",
-                                "id"=>"delete_staff".$item->id,
-                                "action"=>"Delete",
-                                "url"=>"#",
-                                "content"=>"admin.contents.staff.components.delete",
-                                "show_title"=>False
-                                ]])
-                            </div>
+                        <td>{{ $item->alamat }}</td>
                         </td>
                     </tr>
                     @endforeach

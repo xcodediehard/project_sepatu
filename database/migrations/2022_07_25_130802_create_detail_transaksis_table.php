@@ -20,6 +20,8 @@ class CreateDetailTransaksisTable extends Migration
             $table->integer("jumlah");
             $table->integer("biaya");
             $table->integer("diskon");
+            $table->string("resi");
+            $table->string("gambar");
             $table->enum("status", [1, 0])->default(0);
             $table->timestamps();
         });

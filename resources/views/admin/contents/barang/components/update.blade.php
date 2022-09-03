@@ -47,15 +47,17 @@
 <div class="form-group">
     <label for="exampleFormControlTextarea1">Add Stok and Size</label>
     @foreach ($item->detail_barang_field as $item_detail)
-    @if ($loop->iteration == 1)
+    <input type="hidden" name="point[]" value="{{$item_detail->id}}">
 
+    @if ($loop->iteration == 1)
+    <div class="del_list"></div>
     <div class="row_data">
         <div class="input-group mb-1">
             <div class="input-group-prepend">
             </div>
             <input type="text" class="form-control m-input border border-primary" placeholder="Size" name="size[]"
                 value="{{ $item_detail->size }}">
-            <input type="text" class="form-control m-input border border-danger" placeholder="Stok" name="stok"
+            <input type="text" class="form-control m-input border border-danger" placeholder="Stok" name="stok[]"
                 value="{{ $item_detail->stok }}">
         </div>
     </div>
@@ -63,7 +65,8 @@
     <div class="row_data_update_delete">
         <div class="input-group mb-1">
             <div class="input-group-prepend">
-                <button class="btn btn-primary update_delete" id="update_delete" type="button">
+                <button class="btn btn-primary update_delete" data-link="{{$item_detail->id}}" id="update_delete"
+                    type="button">
                     <i class="bi bi-trash"></i>
                     Delete
                 </button>

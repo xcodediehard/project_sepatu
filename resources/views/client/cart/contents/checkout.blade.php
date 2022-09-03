@@ -158,6 +158,8 @@
         let kota =$("select[name='kota']").find("option:selected").val();
         if(kurir !== 'empty' && provinsi !== 'empty' && kota !== 'empty'){
             let weight = {{$total * 1000}}
+
+            console.log( kota+weight+kurir)
             $("select[name='paket']").html("")
             $.ajax({
                 type: "POST",

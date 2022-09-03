@@ -10,6 +10,7 @@
     <meta name="author" content="">
 
     @include('admin.components.header')
+    @stack("styles")
 </head>
 
 <body id="page-top">

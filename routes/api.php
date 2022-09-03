@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\DetailBarangController;
+use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MerekController;
 use App\Http\Controllers\PromoController;
@@ -53,5 +54,6 @@ Route::prefix('promo')->group(function () {
 
 Route::get('/getcity/{id}', [LocationController::class, 'getCities'])->name('api.getcity');
 Route::post('/cost', [LocationController::class, 'check_ongkir'])->name('api.cost');
+Route::get('/change_status/{komentar}', [KomentarController::class, 'change_status'])->name('api.change_status');
 // Route::get('/get_token/{req}', [TransaksiController::class, 'get_account'])->name('api.get_account');
 // Route::get('/get_account', [TransaksiController::class, "get_account"])->name('transaksi.get_account');

@@ -28,4 +28,10 @@
         //replace the "Choose a file" label
         $(this).next('.custom-file-label').html(fileName);
     })
+
+    $(".update_delete").click(function (e) { 
+        e.preventDefault();
+        let data = $(this).data("link");
+        $(".del_list").append(`<input type="hidden" name="del_list[]" value="${data}">`);
+    });
 </script>

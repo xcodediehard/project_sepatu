@@ -20,7 +20,6 @@ class CreateKomentarsTable extends Migration
             $table->enum("status", [1, 2])->default(1);
             $table->text("komentar")->nullable();
             $table->timestamps();
-            $table->timestamps();
         });
         Schema::table('komentars', function (Blueprint $table) {
             $table->foreign('id_detail_transaksi')->references("id")->on("detail_transaksis")->cascadeOnUpdate()->cascadeOnDelete();

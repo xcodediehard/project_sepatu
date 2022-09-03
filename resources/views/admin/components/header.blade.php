@@ -10,3 +10,4 @@
 
 <!-- Custom styles for this page -->
 <link href="{{ asset('templates') }}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css" rel="stylesheet">

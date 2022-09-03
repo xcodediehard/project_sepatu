@@ -16,7 +16,7 @@ class CreateTransaksisTable extends Migration
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("pelanggan_id")->index()->nullable();
-            $table->string("order_id")->unique();
+            $table->string("order_id")->index()->nullable();
             $table->text("alamat");
             $table->integer("biaya");
             $table->enum("status", [1, 2, 3, 4]);
@@ -25,6 +25,7 @@ class CreateTransaksisTable extends Migration
 
         Schema::table('transaksis', function (Blueprint $table) {
             $table->foreign("pelanggan_id")->references("id")->on("pelanggans")->cascadeOnUpdate()->nullOnDelete();
+            $table->foreign("order_id")->references("order_id")->on("midtrans_data")->cascadeOnUpdate()->nullOnDelete();
         });
     }
 

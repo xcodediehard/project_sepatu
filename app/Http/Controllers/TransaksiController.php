@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Embed\Midtrans\CreateSnapTokenService;
 use App\Embed\Midtrans\StatusTransactionService;
+use App\Models\DetailBarang;
 use App\Models\DetailTransaksi;
+use App\Models\Keranjang;
 use App\Models\Komentar;
 use App\Models\Kota;
+use App\Models\MidtransData;
 use App\Models\Transaksi;
 use Illuminate\Support\Facades\Validator;
 
@@ -146,6 +149,8 @@ class TransaksiController extends Controller
             "biaya" => $req->paket,
             "status" => $code_status,
         ];
+
+        $md_trans = MidtransData::create(['order_id' => $req->detail_pemesanan]);
         $transaksi = Transaksi::create($list_transaksi);
 
         if ($transaksi) {
@@ -157,17 +162,26 @@ class TransaksiController extends Controller
                     "biaya" => ($value["jumlah"] * $value["biaya"])
                 ];
                 $detail_process = DetailTransaksi::create($list_detail_transkasi);
+                $update = DetailBarang::where("id", "=", $value["detail_barang_id"]);
+                $get_data = $update->first();
+                $total = ($get_data->stok - $$value["jumlah"]);
+                $update->update(["stok" => $total, ""]);
             }
 
+            if (!empty(session('keranjang'))) {
+                foreach (session("keranjang") as $val) {
+                    $update = Keranjang::where("detail_barang_id", "=", $val)->delete();
+                }
+            }
             return redirect()->route("pages.home");
         }
     }
 
     public function status_transaksi()
     {
-        $transaksi_list = Transaksi::where("pelanggan_id", "=", auth()->guard("client")->user()->id)->get();
+        $transaksi_list = Transaksi::where("pelanggan_id", "=", auth()->guard("client")->user()->id)->latest()->get();
         $detail_transaksi = collect($transaksi_list)->map(function ($response) {
-            $detail_transaksi = DB::select("SELECT * FROM detail_transaksis a LEFT JOIN detail_barangs b ON a.detail_barang_id = b.id LEFT JOIN barangs c ON b.barang_id = c.id WHERE a.order_id = " . $response->order_id);
+            $detail_transaksi = DB::select("SELECT *,a.id as payment_id FROM detail_transaksis a LEFT JOIN detail_barangs b ON a.detail_barang_id = b.id LEFT JOIN barangs c ON b.barang_id = c.id WHERE a.order_id = " . $response->order_id);
             $object_status = new StatusTransactionService($response->order_id);
             $status = $object_status->getstatus();
             if ($status->transaction_status === 'pending') {
@@ -208,30 +222,55 @@ class TransaksiController extends Controller
         return view("client.cart.contents.list_transaksi", compact("data"));
     }
 
-    public function send_comment(Request $request)
+    public function transaksi_list(Request $req)
     {
-        // dd($request->all());
-        $request->validate([
-            "barang.*" => "required|exists:detail_transaksis,id",
-            "rating_score" => "required",
-            "comment" => "required",
-            "comentar_number" => "exists:transaksis,order_id"
+        $req->validate([
+            "cart.*" => "exists:keranjangs,id"
         ]);
 
-        foreach ($request->barang as $key => $value) {
-            Komentar::create([
-                "detail_transaksi_id" => $value,
-                "rate" => $request->rating_score,
-                "status" => "1",
-                "komentar" => $request->comment
+        $data_midtrans = [];
+        $data_store = [];
+        $data_display = [];
+        $data_keranjang = [];
+        foreach ($req->cart as $key => $value) {
+            array_push($data_keranjang, $value);
+            $req = Keranjang::where("id", "=", $value)->first();
+
+            $detail_data = DB::select("SELECT b.barang_name,b.barang_harga,a.size,b.barang_gambar FROM detail_barangs a LEFT JOIN barangs b ON a.barang_id = b.id WHERE a.id =" . $req->detail_barang_id);
+            array_push($data_midtrans, [
+                "id" => rand(),
+                "price" => $detail_data[0]->barang_harga,
+                "quantity" => $req->jumlah,
+                "name" => $detail_data[0]->barang_name . " Size " . $detail_data[0]->size
+            ]);
+
+
+
+            array_push($data_store, [
+                "detail_barang_id" => $req->detail_barang_id,
+                "jumlah" => $req->jumlah,
+                "biaya" => $detail_data[0]->barang_harga
+            ]);
+
+
+
+            array_push($data_display, [
+                "detail_barang_id" => $req->detail_barang_id,
+                "jumlah" => $req->jumlah,
+                "biaya" => $detail_data[0]->barang_harga,
+                "gambar" => $detail_data[0]->barang_gambar,
+                "nama" => $detail_data[0]->barang_name,
+                "size" => $detail_data[0]->size,
             ]);
         }
-
-        $transaksi = Transaksi::where("order_id", "=", $request->comentar_number)->update(["status_done" => "1"]);
-        if ($transaksi) {
-            return redirect()->route("pages.home");
-        } else {
-            return redirect()->route("pages.home");
-        }
+        session()->forget("midtrans");
+        session()->forget("store");
+        session()->forget("display");
+        session()->forget("keranjang");
+        session(["midtrans" => $data_midtrans]);
+        session(["store" => $data_store]);
+        session(["display" => $data_display]);
+        session(["keranjang" => $data_keranjang]);
+        return redirect()->route("transaksi.payment");
     }
 }

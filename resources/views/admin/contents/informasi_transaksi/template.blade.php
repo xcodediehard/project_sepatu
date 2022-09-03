@@ -13,15 +13,27 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table border="0" cellspacing="5" cellpadding="5">
+                <tbody>
+                    <tr>
+                        <td>Minimum date:</td>
+                        <td><input type="text" id="min" name="min"></td>
+                    </tr>
+                    <tr>
+                        <td>Maximum date:</td>
+                        <td><input type="text" id="max" name="max"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered" id="datatabledate" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Status Transaksi</th>
                         <th>Nama</th>
                         <th>Alamat</th>
-                        <th>Tanggal</th>
                         <th>Total</th>
+                        <th>Tanggal</th>
                         <th>Detail</th>
                     </tr>
                 </thead>
@@ -31,8 +43,8 @@
                         <th>Status Transaksi</th>
                         <th>Nama</th>
                         <th>Alamat</th>
-                        <th>Tanggal</th>
                         <th>Total</th>
+                        <th>Tanggal</th>
                         <th>Detail</th>
 
                 </tfoot>
@@ -47,8 +59,8 @@
                         </td>
                         <td>{{$item->nama}}</td>
                         <td>{{$item->alamat}} ({{$item->telpon}})</td>
-                        <td>{{$item->tanggal_pesan}} </td>
                         <td>Rp.{{number_format($item->gross_amount)}}</td>
+                        <td>{{$item->created_at}}</td>
                         <td>
                             <div class="mt-2">
                                 @include('components.modal',[
@@ -69,4 +81,17 @@
         </div>
     </div>
 </div>
+
+@push('styple')
+
+@endpush
+@push("scripts")
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="{{ asset('templates') }}/js/demo/datatables-date.js"></script>
+@endpush
 @endsection

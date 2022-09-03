@@ -28,6 +28,26 @@
                             @csrf
                             <div class="card-body">
                                 <b>Pilih Size :</b>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                        id="inlineRadio1" value="option1">
+                                    <label class="form-check-label" for="inlineRadio1">CM</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                        id="inlineRadio1" value="option1">
+                                    <label class="form-check-label" for="inlineRadio1">UER</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                        id="inlineRadio1" value="option1">
+                                    <label class="form-check-label" for="inlineRadio1">UK</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                        id="inlineRadio1" value="option1">
+                                    <label class="form-check-label" for="inlineRadio1">US</label>
+                                </div>
                                 @foreach ($data["list_cart"]->detail_barang as $item_detail)
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="size" id="exampleRadios1"
@@ -50,7 +70,8 @@
                             @if (!empty(auth()->guard("client")->user()))
                             <button class="btn btn-outline-danger btn-block btn-submit"
                                 data-link="{{ route('transaksi.checkout') }}">Checkout</button>
-                            <button class="btn btn-danger btn-block btn-submit">Keranjang</button>
+                            <button class="btn btn-danger btn-block btn-submit"
+                                data-link="{{ route('pages.whistlist') }}">Keranjang</button>
                             @else
                             <a class="btn btn-outline-danger btn-block" href="{{ route('user.login') }}">Checkout</a>
                             <a class="btn btn-danger btn-block" href="{{ route('user.login') }}">Keranjang</a>
@@ -64,11 +85,31 @@
 
     <div class="container mt-5 mb-5">
         <div class="card">
-            <div class="card-header border border-danger">
+            <div class="card-header border border-danger bg bg-danger text-white">
                 <h4>Komentar</h4>
             </div>
             <div class="card-body border border-danger">
+                @foreach ($data["list_comment"] as $item_comment)
+                <div class="card ">
+                    <div class="card-header">
+                        <h5>{{$item_comment["komentar"]->nama}} / @for ($i = 0; $i < 5 ; $i++) @if (
+                                $item_comment["komentar"]->rate <= $i ) <i class="fas fa-star"></i>
+                                    @else
+                                    <i class="fas fa-star text-warning"></i>
 
+                                    @endif
+                                    @endfor</h4>
+                    </div>
+                    <div class="card-body">
+                        <h4>{{$item_comment["komentar"]->komentar}}</h4>
+                    </div>
+                    @if ($item_comment["balasan"] != null)
+                    <div class="card-footer bg bg-primary text-white">
+                        <h4>{{$item_comment["balasan"]}}</h4>
+                    </div>
+                    @endif
+                </div>
+                @endforeach
             </div>
         </div>
     </div>

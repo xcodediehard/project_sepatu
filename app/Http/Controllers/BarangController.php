@@ -17,11 +17,41 @@ class BarangController extends Controller
     {
         for ($i = 0; $i < count($stok); $i++) {
             $format = [
-                'id_barang' => $id,
+                'barang_id' => $id,
                 'size' => $size[$i],
                 'stok' => $stok[$i],
             ];
             DetailBarang::create($format);
+        }
+
+        return True;
+    }
+
+    public function update_detail_barang($stok, $size, $point, $id)
+    {
+
+        if (count($stok) == count($point)) {
+            $i = 0;
+            foreach ($point as $key => $value) {
+                $format = [
+                    'size' => $size[$i],
+                    'stok' => $stok[$i],
+                ];
+                DetailBarang::find($value)->update($format);
+                $i++;
+            }
+        }
+
+        if (count($stok) > count($point)) {
+            $start = (count($point) - 1);
+            for ($i = $start; $i < count($size); $i++) {
+                $format = [
+                    'barang_id' => $id,
+                    'size' => $size[$i],
+                    'stok' => $stok[$i],
+                ];
+                DetailBarang::create($format);
+            }
         }
 
         return True;
@@ -44,7 +74,9 @@ class BarangController extends Controller
             "barang" => "required|unique:barangs,barang_name",
             "harga" => "required",
             "gambar" => "mimes:png,jpg,jfif|image|required",
-            "keterangan" => "required"
+            "keterangan" => "required",
+            'stok.*' => 'required',
+            'size.*' => 'required',
         ]);
 
         $file = $req->file('gambar');
@@ -59,7 +91,10 @@ class BarangController extends Controller
         ];
 
         $process = Barang::create($list_value);
-        if ($process) {
+        $detail = $this->insert_detail_barang($req->stok, $req->size, $process->id);
+        if ($detail) {
+            $path_upload = 'resources/barang/';
+            $file->move($path_upload, $filename);
             session()->flash('success', 'Anda berhasil memasukan data');
             return redirect()->back();
         } else {
@@ -72,9 +107,12 @@ class BarangController extends Controller
     {
         $req->validate([
             "merek" => "required|exists:mereks,id",
-            "barang" => "required|unique:barangs,barang_name",
+            "barang" => "required",
             "harga" => "required",
-            "keterangan" => "required"
+            "keterangan" => "required",
+            "point.*" => "required|exists:detail_barangs,id",
+            "stok.*" => "required",
+            "size.*" => "required"
         ]);
 
         $barang = Barang::find($id);
@@ -94,14 +132,21 @@ class BarangController extends Controller
             "barang_keterangan" => $req->keterangan
         ];
 
+
         $process = $barang->update($list_values);
-        if ($process) {
+        if (!empty($req->del_list)) {
+            foreach ($req->del_list as $key => $value) {
+                DetailBarang::find($value)->delete();
+            }
+        }
+        $update_detail = $this->update_detail_barang($req->stok, $req->size, $req->point, $barang->id);
+        if ($update_detail && $process) {
             $path_delete = 'resources/barang/' . $filename;
             if (File::exists($path_delete)) {
                 File::delete($path_delete);
+                $path_upload = 'resources/barang/';
+                $file->move($path_upload, $filename);
             }
-            $path_upload = 'resources/barang/';
-            $file->move($path_upload, $filename);
             session()->flash('success', 'Anda berhasil ubah data');
             return redirect()->back();
         } else {

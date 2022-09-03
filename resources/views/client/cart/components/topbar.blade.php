@@ -12,7 +12,8 @@
             </li>
             @if (!empty(auth()->guard("client")->user()))
             <li class="nav-item active">
-                <a class="nav-link" href="#">Keranjang <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{{ route('pages.keranjang_cart') }}">Keranjang <span
+                        class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="{{ route('pages.list_transaksi') }}">Transaksi <span

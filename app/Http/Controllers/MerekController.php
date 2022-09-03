@@ -23,14 +23,16 @@ class MerekController extends Controller
             "merek" => "required|unique:mereks,merek_name"
         ]);
         $list_value = [
-            "user_id" => 1,
+            "user_id" => auth()->guard("admin")->user()->id,
             "merek_name" => $req->merek
         ];
         $process = Merek::create($list_value);
         if ($process) {
-            return response()->json(["status" => "success insert"], 200);
+            session()->flash('success', 'Data berhasil dimasukan');
+            return redirect()->route('merek.view');
         } else {
-            return response()->json(["status" => "fail insert"], 401);
+            session()->flash('error', 'Data gagal dimasukan');
+            return redirect()->route('merek.view');
         }
     }
 
@@ -40,7 +42,7 @@ class MerekController extends Controller
             "merek" => "required|unique:mereks,merek_name"
         ]);
         $list_value = [
-            "user_id" => 1,
+            "user_id" => auth()->guard("admin")->user()->id,
             "merek_name" => $req->merek
         ];
 
@@ -48,9 +50,11 @@ class MerekController extends Controller
 
         $process = $base->update($list_value);
         if ($process) {
-            return response()->json(["status" => "success update"], 200);
+            session()->flash('success', 'Data berhasil diedit');
+            return redirect()->route('merek.view');
         } else {
-            return response()->json(["status" => "fail update"], 401);
+            session()->flash('error', 'Data gagal diedit');
+            return redirect()->route('merek.view');
         }
     }
 
@@ -59,9 +63,11 @@ class MerekController extends Controller
     {
         $process = $merek->delete();
         if ($process) {
-            return response()->json(["status" => "success delete"], 200);
+            session()->flash('success', 'Data berhasil dihapus');
+            return redirect()->route('merek.view');
         } else {
-            return response()->json(["status" => "fail delete"], 401);
+            session()->flash('error', 'Data gagal dihapus');
+            return redirect()->route('merek.view');
         }
     }
 }

@@ -26,28 +26,24 @@
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Merek</th>
-                        <th>Barang</th>
-                        <th>Harga</th>
-                        <th>Keterangan</th>
-                        <th>Ukuran</th>
-                        <th>Stok</th>
-                        <th>Aksi</th>
+
+                    <th>No</th>
+                    <th>Merek</th>
+                    <th>Barang</th>
+                    <th>Harga</th>
+                    <th>Keterangan</th>
+                    <th>Aksi</th>
                     </tr>
                 </thead>
                 <tfoot>
-                    <tr>
-                        <th>No</th>
-                        <th>Merek</th>
-                        <th>Barang</th>
-                        <th>Harga</th>
-                        <th>Keterangan</th>
-                        <th>Ukuran</th>
-                        <th>Stok</th>
-                        <th>Aksi</th>
-                    <tr>
+
+                    <th>No</th>
+                    <th>Merek</th>
+                    <th>Barang</th>
+                    <th>Harga</th>
+                    <th>Keterangan</th>
+                    <th>Aksi</th>
+
                 </tfoot>
                 <tbody>
                     @foreach ($data['list'] as $item)
@@ -56,20 +52,20 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item->merek_field->merek_name }}</td>
                         <td>{{ $item->barang_name }}</td>
-                        <td>{{ $item->barang_harga }}</td>
+                        <td>Rp. {{ number_format($item->barang_harga) }}</td>
                         <td>{{ $item->barang_keterangan }}</td>
-
                         <td>
-                            @foreach ($item->detail_barang_field as $sizing)
-                            {{ $sizing->size }}
-                            @endforeach
-                        </td>
-                        <td>
-                            @foreach ($item->detail_barang_field as $stocking)
-                            {{ $sizing->stok }}
-                            @endforeach
-                        </td>
-                        <td>
+                            <div class="mt-2">
+                                @include('components.modal',[
+                                "modal"=>[
+                                "color"=>"primary",
+                                "id"=>"detail_barang".$item->id,
+                                "action"=>"Detail",
+                                "url"=>"#",
+                                "content"=>"admin.contents.barang.components.detail",
+                                "show_title"=>False
+                                ]])
+                            </div>
                             <div class="mt-2">
                                 @include('components.modal',[
                                 "modal"=>[

@@ -57,10 +57,10 @@
     </div>
 
     <!-- Nav Item - Charts -->
-    <li class="nav-item active">
-        <a class="nav-link" href="charts.html">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('pelanggan.view') }}">
             <i class="fas fa-fw fa-users"></i>
-            <span>Pengguna</span></a>
+            <span>Informasi Pengguna</span></a>
     </li>
 
     <!-- Nav Item - Tables -->
@@ -71,16 +71,16 @@
     </li>
     <!-- Nav Item - Tables -->
     <li class="nav-item ">
-        <a class="nav-link" href="tables.html">
+        <a class="nav-link" href="{{ route('pengiriman.transaksi') }}">
             <i class="fas fa-fw fa-box"></i>
             <span>Informasi Pengiriman</span></a>
     </li>
-    <!-- Nav Item - Tables -->
+    {{-- <!-- Nav Item - Tables -->
     <li class="nav-item ">
         <a class="nav-link" href="tables.html">
             <i class="fas fa-fw fa-list"></i>
             <span>Informasi Complete</span></a>
-    </li>
+    </li> --}}
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

@@ -3,10 +3,12 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\DetailTransaksiController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\MerekController;
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,23 +57,33 @@ Route::prefix('/')->group(function () {
     Route::get('/', [HomeController::class, "index"])->name('pages.home');
     Route::get('/{merek}', [HomeController::class, "display_by_merek"])->name('pages.display_by_merek');
     Route::get('/cart/choice/{name}', [KeranjangController::class, "index"])->name('keranjang.index');
-    Route::get('/history/transaksi', [TransaksiController::class, "status_transaksi"])->name('pages.list_transaksi');
+    Route::middleware(['auth:client'])->group(function () {
+
+        Route::get('/history/transaksi', [TransaksiController::class, "status_transaksi"])->name('pages.list_transaksi');
+        Route::post('/checkout/keranjang', [KeranjangController::class, "whistlist"])->name('pages.whistlist');
+        Route::get('/list/keranjang', [KeranjangController::class, "keranjang_cart"])->name('pages.keranjang_cart');
+        Route::get('/trash/keranjang/{keranjang}', [KeranjangController::class, "delete_keranjang"])->name('pages.delete_keranjang');
+    });
 });
 
-
-Route::prefix('transaksi')->group(function () {
-    Route::post('/checkout', [TransaksiController::class, "checkout"])->name('transaksi.checkout');
-    Route::get('/payment', [TransaksiController::class, "payment"])->name('transaksi.payment');
-    Route::post('/get_token', [TransaksiController::class, 'get_account'])->name('api.get_account');
-    Route::post('/transaction', [TransaksiController::class, 'transaksi'])->name('transaksi.transaksi');
-    Route::post('/send_comment', [TransaksiController::class, 'send_comment'])->name('transaksi.send_comment');
+Route::middleware(['auth:client'])->group(function () {
+    Route::prefix('transaksi')->group(function () {
+        Route::post('/checkout', [TransaksiController::class, "checkout"])->name('transaksi.checkout');
+        Route::get('/payment', [TransaksiController::class, "payment"])->name('transaksi.payment');
+        Route::post('/get_token', [TransaksiController::class, 'get_account'])->name('api.get_account');
+        Route::post('/transaction', [TransaksiController::class, 'transaksi'])->name('transaksi.transaksi');
+        Route::post('/transaksi_list', [TransaksiController::class, 'transaksi_list'])->name('transaksi.transaksi_list');
+        Route::post('/send_comment', [KomentarController::class, 'send_comment'])->name('transaksi.send_comment');
+    });
 });
+
 
 
 
 // Auth Admin
 Route::middleware(['auth:admin'])->group(function () {
     Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', [HomeController::class, "dashboard"])->name('dashboard');
         Route::prefix('/staff')->group(function () {
             Route::get('/', [AdminController::class, "index"])->name('staff.view');
             Route::post('/insert', [AdminController::class, "store"])->name('staff.insert');
@@ -97,17 +109,18 @@ Route::middleware(['auth:admin'])->group(function () {
             Route::get('/delete/{barang}', [PromoController::class, "destroy"])->name('promo.delete');
         });
         Route::prefix('/transaksi')->group(function () {
-            Route::get('/informasi', [TransaksiController::class, "informasi_transaksi"])->name('informasi.transaksi');
-            Route::get('/pengiriman', [TransaksiController::class, "informasi_pengiriman"])->name('pengiriman.transaksi');
+            Route::get('/informasi', [DetailTransaksiController::class, "informasi_transaksi"])->name('informasi.transaksi');
+            Route::get('/pengiriman', [DetailTransaksiController::class, "informasi_pengiriman"])->name('pengiriman.transaksi');
+            Route::post('/validation_pengiriman', [DetailTransaksiController::class, "validation_pengiriman"])->name('validation_pengiriman.transaksi');
         });
-        Route::prefix('/thumbnile')->group(function () {
-            Route::get('/', [ThumbnileController::class, "index"])->name('thumbnile.view');
+        Route::prefix('/pelanggan')->group(function () {
+            Route::get('/', [PelangganController::class, "index"])->name('pelanggan.view');
         });
         Route::prefix('/komentar')->group(function () {
             Route::get('/', [KomentarController::class, "index"])->name('komentar.view');
             Route::post('/insert', [KomentarController::class, "store"])->name('komentar.insert');
             Route::put('/update/{komentar}', [KomentarController::class, "update"])->name('komentar.update');
-            Route::delete('/delete/{komentar}', [KomentarController::class, "destroy"])->name('komentar.delete');
+            Route::delete('/balas', [KomentarController::class, "balas"])->name('komentar.balas');
         });
     });
 });

@@ -7,7 +7,7 @@
         </div>
         <div class="card-body">
             @foreach ($data["list_data"] as $item)
-            <div class="card">
+            <div class="card mt-2">
                 <div class="card-header">
                     <h4>{{strtoupper($item["status"]["bank"])}} / {{$item["status"]["va_numbers"]}}</h4>
                 </div>
@@ -26,7 +26,7 @@
                         Detail
                     </button>
                     {{-- KOMENTAR --}}
-                    @if ($item["status"]["status"] == 1)
+                    @if ($item["status"]["validation"] == 0)
                     <button class="btn btn-primary mb-2 validation_button" type="button" data-toggle="collapse"
                         data-target="#validation_button{{$item["status"]["va_numbers"]}}" aria-expanded="false"
                         aria-controls="validation_button{{$item["status"]["va_numbers"]}}">
@@ -44,7 +44,7 @@
                                     @csrf
                                     <input type="hidden" name="comentar_number" value="{{$item["status"]["code"]}}">
                                     @foreach ($item["detail"] as $details)
-                                    <input type="hidden" name="barang[]" value="{{$details->id}}">
+                                    <input type="hidden" name="barang[]" value="{{$details->payment_id}}">
                                     @endforeach
                                     <div class="card-body">
                                         <h5>Rating dan Komentar</h5>
